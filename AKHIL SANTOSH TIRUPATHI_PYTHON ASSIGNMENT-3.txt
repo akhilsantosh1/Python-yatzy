@@ -1,0 +1,440 @@
+import random
+
+from collections import namedtuple
+
+dict1={'ONCE':'0','TWOS':'0','THREES':'0','FOURS':'0','FIVES':'0','SIX':'0','PAIR':'0','TWOPAIR':'0',
+'THREE_OF_KIND':'0','FOUR_OF_KIND':'0','SMALL_STRAIGHT':'0','LARGE_STRAIGHT':'0','FULL_HOUSE':'0',
+'CHANCE':'0','YATZY':'0'}                 #Implementation of scoreing pad in dictionary
+
+keep_lst=[];dice_lst1=[];dice_lst2=[];dice_lst3=[];dice_lst4=[];obj_list=[]
+once=[];two=[];three=[];four=[];five=[];six=[];pair=[];tpair=[];thpair=[];fkind=[];small=[];large=[];fh=[];ch=[];yatzy1=[]
+once_count=0;points=0
+
+players_score=namedtuple("players_score",['Names','Scoreing_pad','Dice_used'])  # Named tuple with player names scoring board and dice used 
+
+def dice(n):
+    for i in range(n):
+        yield random.randint(1,6)         #Implementation of dies using generator(yeild)        
+
+def dice_roll():
+    dice_lst1=list(dice(5))
+    print(dice_lst1)   
+    print('enter the no of dice u want to keep')
+    keepno=int(input())                              #keepno is used to know how many dice player is keeping
+    for j in range(0,keepno):
+        print('enter the value u want to keep')
+        keep=int(input())
+        keep_lst.append(keep)
+    for k in range(0,5):
+        i=0
+        if(keepno==k):
+            dice_lst2=list(dice(5-k))
+            print(dice_lst2)
+        k=k+1 
+    lenth=len(dice_lst2)    
+    print('enter the no of dice u want to keep')
+    keepno=int(input())
+    for j in range(0,keepno):
+        print('enter the value u want to keep')
+        keep=int(input())
+        keep_lst.append(keep) 
+    for k in range(0,lenth):
+        i=0
+        if(keepno==k):
+            dice_lst3=list(dice(lenth-keepno))
+            print(dice_lst3)
+        k=k+1
+    keep_lst.extend(dice_lst3)           #keep_lst stores the kept dice by the user
+
+def onces():
+    count=0
+    points=0
+    count=keep_lst.count(1)              #counts the number of 1's in the keep_lst from roll_dice function
+    points=count*1
+    return(points)                       # returns score of once category as points 
+
+def twos():
+    count=0
+    points=0
+    count=keep_lst.count(2)              #counts the number of 2's in the keep_lst from roll_dice function
+    points=count*2
+    return(points)
+
+def threes():
+    count=0
+    points=0
+    count=keep_lst.count(3)              #counts the number of 3's in the keep_lst from roll_dice function
+    points=count*3
+    return(points)
+
+def fours():
+    count=0
+    points=0
+    count=keep_lst.count(4)              #counts the number of 4's in the keep_lst from roll_dice function
+    points=count*4
+    return(points)
+
+def fives():
+    count=0
+    points=0
+    count=keep_lst.count(5)              #counts the number of 5's in the keep_lst from roll_dice function
+    points=count*5
+    return(points)
+
+def sixs():
+    count=0
+    points=0
+    count=keep_lst.count(6)              #counts the number of 6's in the keep_lst from roll_dice function
+    points=count*6
+    return(points)
+
+def pairs():
+    points=0
+    support=0
+    for k in range(1,7):
+        if keep_lst.count(k)>=2:
+            support=support+1            #If suppot increases it indicate a pair has occured
+            if(support>=1):
+                points=k*2
+        k=k+1 
+    return(points)                  
+
+def two_pairs():
+    points=0
+    support=0
+    for k in range(1,7):
+        if keep_lst.count(k)>=2:
+            support=support+1
+            if(support>=2):
+                points=k*4
+        k=k+1
+    return(points)
+
+def three_kind():
+    points=0
+    support=0
+    for k in range(1,7):
+        if keep_lst.count(k)>=3:
+            support=support+1
+            if(support>=1):
+                points=k*3
+        k=k+1
+    return(points)
+
+def four_kind():
+    points=0
+    support=0
+    for k in range(1,7):
+        if keep_lst.count(k)>=4:
+            support=support+1
+            if(support>=1):
+                points=points+k*4
+        k=k+1
+    return(points)
+
+def small_straight():
+    points=0
+    keep_lst.sort()
+    if [1,2,3,4,5]==keep_lst:
+        points=points+15
+    return(points)
+
+def large_straight():
+    points=0
+    keep_lst.sort()
+    if [2,3,4,5,6]==keep_lst:
+        points=points+20 
+    return(points)
+
+def full_house():
+    points=0
+    support=0
+    for k in range(1,7):
+        if keep_lst.count(k)>=3:
+            support=support+1
+            if(support>=1):
+                points=points+k*3
+        k=k+1        
+    for k in range(1,7):
+        if keep_lst.count(k)>=2:
+            support=support+1
+            if(support>=1):
+                points=points+(k*2)              
+        k=k+1  
+    return(points)    
+
+def chance():
+    points=0
+    summ=sum(keep_lst)
+    points=points+summ
+    return(points)
+
+def yatzy():
+    points=0
+    for k in range(1,7):
+        if keep_lst.count(k)==5:
+            support=support+1
+            if(support==1):
+                print("YATZY")
+                points=points+50
+        k=k+1  
+    return(points)
+
+def delete():
+    del keep_lst[:]                              # delete function to clear used list for another player's turn
+    del dice_lst1[:]
+    del dice_lst2[:]
+    del dice_lst3[:] 
+
+def gamemain():
+    pno=0
+    #game intro
+    print("\n\n##### HELLO WELCOME TO YATZY! #####\n")
+    print("THERE ARE 15 ROUNDS IN THIS GAME WITH VARIOUS ROUNDS\n")
+    while True:
+        print("PLEASE ENTER THE PLAYER NAME OR 'start' TO START THE GAME\n") #Enter player names until input is start
+        name = input()
+        if(name=="start"):                            # Game only starts when input is 'start'.
+            break
+        obj = players_score(name,dict1,keep_lst)
+        obj_list.append(obj)
+        pno=len(obj_list) 
+
+    print("\n**players before shuffle**")
+    for i in range(0,pno):
+        print(obj_list[i].Names)
+    print("\n**players after shuffle**")
+    random.shuffle(obj_list)
+    for i in range(0,pno):
+        print(obj_list[i].Names)
+
+    print("\nROUND 1 HAS STARTED (once)\n")   
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()                                    #dice rolling fuction has been called
+            poi=onces()
+            once.append(poi)
+            obj_list[i].Scoreing_pad['ONCE']=once
+            print(obj_list[i])
+            delete()                                       #delete function called to clear the list for another player
+        points=0    
+
+    print("\nROUND 2 HAS STARTED (twos)\n")
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=twos()
+            two.append(poi) 
+            obj_list[i].Scoreing_pad['TWOS']=two
+            print(obj_list[i])
+            delete()
+        points=0    
+
+    print("\nROUND 3 HAS STARTED (threes)\n")
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=threes()
+            three.append(poi)
+            obj_list[i].Scoreing_pad['THREES']=three
+            print(obj_list[i])
+            delete()
+        points=0     
+
+    print("\nROUND 4 HAS STARTED (fours)\n")
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=fours() 
+            four.append(poi)
+            obj_list[i].Scoreing_pad['FOURS']=four
+            print(obj_list[i])
+            delete()
+        points=0     
+
+    print("\nROUND 5 HAS STARTED (fives)\n")
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=fives()
+            five.append(poi) 
+            obj_list[i].Scoreing_pad['FIVES']=five
+            print(obj_list[i])
+            delete()
+        points=0   
+
+    print("\nROUND 6 HAS STARTED (six)\n")
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=sixs()
+            six.append(poi)  
+            obj_list[i].Scoreing_pad['SIX']=six
+            print(obj_list[i])
+            delete()
+        points=0    
+
+    print("\nROUND 7 HAS STARTED (pairs)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=pairs()
+            pair.append(poi)
+            obj_list[i].Scoreing_pad['PAIR']=pair
+            print(obj_list[i])
+            delete()
+        points=0    
+
+    print("\nROUND 8 HAS STARTED (two pairs)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=two_pairs()
+            tpair.append(poi)
+            obj_list[i].Scoreing_pad['TWOPAIR']=tpair
+            print(obj_list[i])
+            delete()
+        points=0    
+
+    print("\nROUND 9 HAS STARTED (three of a kind)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=three_kind()
+            thpair.append(poi)
+            obj_list[i].Scoreing_pad['THREE_OF_KIND']=thpair
+            print(obj_list[i])
+            delete()
+        points=0   
+
+    print("\nROUND 10 HAS STARTED (four of a kind)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=four_kind()
+            fkind.append(poi)
+            obj_list[i].Scoreing_pad['FOUR_OF_KIND']=fkind
+            print(obj_list[i])
+            delete()
+        points=0    
+
+    print("\nROUND 11 HAS STARTED (small straight)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=small_straight()
+            small.append(poi)
+            obj_list[i].Scoreing_pad['SMALL_STRAIGHT']=small
+            print(obj_list[i])
+            delete()
+        points=0    
+
+    print("\nROUND 12 HAS STARTED (large straight)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=large_straight()
+            large.append(poi)
+            obj_list[i].Scoreing_pad['LARGE_STRAIGHT']=large
+            print(obj_list[i]) 
+            delete()
+        points=0    
+
+    print("\nROUND 13 HAS STARTED (full house)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=full_house()
+            fh.append(poi)
+            obj_list[i].Scoreing_pad['FULL_HOUSE']=fh
+            print(obj_list[i])
+            delete()
+        points=0   
+
+    print("\nROUND 14 HAS STARTED (chance)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=chance()
+            ch.append(poi)
+            obj_list[i].Scoreing_pad['CHANCE']=ch
+            print(obj_list[i])
+            delete()
+        points=0 
+
+    print("\nROUND 15 HAS STARTED (yatzy)\n")    
+    for i in range(0,pno):
+        print("player",i+1,"has to roll the dice")
+        print("press 'y' to roll the dice")
+        plyin=input()
+        if(plyin=='y'):
+            dice_roll()
+            poi=yatzy()
+            yatzy1.append(poi)
+            obj_list[i].Scoreing_pad['YATZY']=yatzy1
+            print(obj_list[i])
+            delete()
+        points=0  
+
+gamemain() 
+
+print("\nTHE FINAL SCORE BOARD IS")           #Displaying final score board
+print(obj_list[0].Scoreing_pad)
+tot=[]
+for i in range(0,len(obj_list)):
+    total=once[i]+two[i]+three[i]+four[i]+five[i]+six[i]+pair[i]+tpair[i]+thpair[i]+fkind[i]+small[i]+large[i]+fh[i]+ch[i]+yatzy1[i]
+    tot.append(total)
+print('## TOTAL ##')      
+print(tot)                     #calculating the total scores of each player
+print("\nPlayers are displayed according to score(the higher the better). The player on top u have won the game")
+index=0
+for j in range(0,len(obj_list)):
+    win=max(tot)
+    index=tot.index(win)
+    print(obj_list[index].Names)    #printing player names in decending order according to total scores
+    del tot[index]
+    del obj_list[index]
+    if(len(tot)==0):
+        break;
